@@ -17,7 +17,13 @@ display_info() {
         record=$(dig +short "$sub.$domain" | head -n 1)
 
         if [[ -n "$record" ]]; then
-            echo "The subdomain $sub is a $(dig +short -t CNAME "$sub.$domain" | grep -q '\.$' && echo "CNAME" || echo "A") record and points to $record"
+            # Determine record type
+            if dig +short -t CNAME "$sub.$domain" | grep -q '\.$'; then
+                record_type="CNAME"
+            else
+                record_type="A"
+            fi
+            echo "The subdomain $sub is a $record_type record and points to $record"
         fi
     done
 }
@@ -34,3 +40,4 @@ else
     echo "Usage: $0 <domain> [subdomain]"
     exit 1
 fi
+
